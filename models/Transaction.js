@@ -12,9 +12,25 @@ export const Transaction = sequelize.define('Transaction', {
     primaryKey: true
   },
   user_id: {
-    type: DataTypes.UUID,
-    allowNull: false,
+    type: DataTypes.INTEGER,
+    allowNull: true,
     references: { model: 'users', key: 'id' }
+  },
+  qr_code_id: {
+  type: DataTypes.UUID,  // Changé en UUID pour correspondre au type de l'id de PendingQRTransaction
+  allowNull: true,
+  references: {
+    model: 'pending_qr_transactions',
+    key: 'id'
+  }
+},
+  admin_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  pending_qr_transaction_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   },
   wallet_id: {
     type: DataTypes.UUID,

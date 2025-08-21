@@ -10,6 +10,7 @@ import wallet from './routes/wallet.js';
 import adminAuthRoutes from './routes/adminAuth.js';
 import orangeRoutes from './routes/orange.js';
 import mvolaRoutes from './routes/mvola.js';
+import qrCodeRoutes from './routes/qrcode.js';
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use('/api/wallet', wallet);
 app.use('/api/admin', adminAuthRoutes);
 app.use('/api/orange', orangeRoutes);
 app.use('/api/mvola', mvolaRoutes);
+app.use('/api/qrcode', qrCodeRoutes);
 
 // Endpoint test
 app.get('/api/health', (req, res) => {

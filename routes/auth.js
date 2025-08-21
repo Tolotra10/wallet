@@ -150,7 +150,7 @@ router.post('/login', validateLogin, async (req, res) => {
     }
 
     // Générer les tokens
-    const tokens = generateTokenPair({ id: user.id, email: user.email });
+    const tokens = generateTokenPair({ id: user.id, email: user.email, type: 'user' });
     user.refresh_token = tokens.refreshToken;
     await user.save();
 

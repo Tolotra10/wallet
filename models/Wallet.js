@@ -11,11 +11,15 @@ export const Wallet = sequelize.define('Wallet', {
   },
   user_id: {
     type: DataTypes.UUID,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'users',
       key: 'id'
     }
+  },
+  admin_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   },
   balance: {
     type: DataTypes.DECIMAL(15, 2),

@@ -1,6 +1,7 @@
 import express from 'express';
 import { AdminUser } from '../models/AdminUser.js';
 import { authenticateAdmin, authorizeRoles } from '../middleware/auth.js';
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -45,7 +46,7 @@ router.post('/login', async (req, res) => {
 
     // Génération du token
     const token = jwt.sign(
-      { id: admin.id, role: admin.role },
+      { id: admin.id, role: admin.role, type: 'admin' },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
@@ -119,5 +120,17 @@ router.delete('/:id', authenticateAdmin, authorizeRoles('super_admin'), async (r
     res.status(500).json({ error: err.message });
   }
 });
+
+// routes/admin.js
+router.post('/logout', (req, res) => {
+  try {
+    // Ici, rien à invalider côté serveur (JWT = stateless)
+    res.json({ message: 'Déconnexion réussie' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 
 export default router;
