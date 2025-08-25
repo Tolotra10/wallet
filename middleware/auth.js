@@ -43,7 +43,7 @@ const authenticateAdmin = async (req, res, next) => {
   }
 };
 
-export const authorizeRoles = (...roles) => {
+const authorizeRoles = (roles = []) => {
   return (req, res, next) => {
     if (!roles.includes(req.admin.role)) {
       return res.status(403).json({ error: 'Accès refusé' });
@@ -51,7 +51,6 @@ export const authorizeRoles = (...roles) => {
     next();
   };
 };
-
 
 // Middleware de vérification des permissions
 const requirePermission = (permission) => {
@@ -170,5 +169,6 @@ export {
   requirePermission,
   requireKYC,
   requireActiveWallet,
-  authenticateUserOrAdmin
+  authenticateUserOrAdmin,
+  authorizeRoles
 };

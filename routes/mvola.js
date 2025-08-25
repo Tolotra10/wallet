@@ -131,7 +131,7 @@ router.post(
 // Callback MVola → confirmation du paiement
 router.post("/callback", async (req, res) => {
   try {
-    const { transaction_id, status } = req.body;
+    const { status } = req.body;
 
     const transactionId = req.body.transactionId
       || req.body.serverCorrelationId

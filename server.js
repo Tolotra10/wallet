@@ -44,7 +44,7 @@ app.use('/api/wallet', wallet);
 app.use('/api/admin', adminAuthRoutes);
 app.use('/api/orange', orangeRoutes);
 app.use('/api/mvola', mvolaRoutes);
-app.use('/api/qrcode', qrCodeRoutes);
+app.use('/api/qrcode', qrCodeRoutes); 
 
 // Endpoint test
 app.get('/api/health', (req, res) => {

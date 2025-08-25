@@ -1,7 +1,8 @@
 import express from 'express';
-import { AdminUser } from '../models/AdminUser.js';
+import { AdminUser } from '../models/index.js';
 import { authenticateAdmin, authorizeRoles } from '../middleware/auth.js';
 import jwt from "jsonwebtoken";
+import { User, sequelize, Transaction } from '../models/index.js';
 
 const router = express.Router();
 
@@ -131,6 +132,73 @@ router.post('/logout', (req, res) => {
   }
 });
 
+// router.delete(
+//   "/users/:id",
+//   authenticateAdmin,
+//   authorizeRoles(["super_admin", "admin"]),
+//   async (req, res) => {
+//     try {
+//       const userId = req.params.id;
+
+//       const user = await User.findByPk(userId); // Sequelize
+//       if (!user) {
+//         return res.status(404).json({ message: "Utilisateur non trouvé" });
+//       }
+
+//       await user.destroy(); // suppression
+//       res.json({ message: "Utilisateur supprimé avec succès" });
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: "Erreur serveur" });
+//     }
+//   }
+// );
+
+router.delete(
+  "/users/:id",
+  authenticateAdmin,
+  authorizeRoles(["super_admin", "admin"]),
+  async (req, res) => {
+    try {
+      const userId = req.params.id;
+      
+      // Début de la transaction
+      const t = await sequelize.transaction();
+
+      try {
+        // Supprimer ou mettre à jour toutes les transactions associées
+        await Transaction.update(
+          { recipient_id: null },
+          { 
+            where: { recipient_id: userId },
+            transaction: t 
+          }
+        );
+
+        // Supprimer l'utilisateur
+        const user = await User.findByPk(userId);
+        if (!user) {
+          await t.rollback();
+          return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        await user.destroy({ transaction: t });
+        
+        // Valider la transaction
+        await t.commit();
+        
+        res.json({ message: "Utilisateur supprimé avec succès" });
+      } catch (error) {
+        // En cas d'erreur, annuler la transaction
+        await t.rollback();
+        throw error;
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  }
+);
 
 
 export default router;

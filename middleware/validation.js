@@ -1,6 +1,4 @@
 import { body, param, query, validationResult } from 'express-validator';
-import { User} from '../models/User.js';
-import bcrypt from 'bcryptjs';
 
 // Middleware pour gérer les erreurs de validation
 const handleValidationErrors = (req, res, next) => {
@@ -168,34 +166,6 @@ const validatePagination = [
     .withMessage('Limite invalide'),
   handleValidationErrors
 ];
-
-// async function validatePassword(req, res, next) {
-//   try {
-//     const { password } = req.body;
-//     if (!password) {
-//       return res.status(400).json({ error: 'Mot de passe requis pour confirmation' });
-//     }
-
-//     const user = await User.findByPk(req.user.id, {
-//       attributes: { include: ['password_hash'] }
-//     });
-
-//     if (!user) {
-//       return res.status(404).json({ error: 'Utilisateur non trouvé' });
-//     }
-
-//     const isMatch = await bcrypt.compare(password, user.password_hash);
-
-//     if (!isMatch) {
-//       return res.status(401).json({ error: 'Mot de passe incorrect' });
-//     }
-
-//     next();
-//   } catch (error) {
-//     console.error('Erreur validatePassword:', error);
-//     res.status(500).json({ error: 'Erreur de validation du mot de passe' });
-//   }
-// }
 
 
 

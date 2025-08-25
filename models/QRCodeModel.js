@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database.js';
 
-export const QRCode = sequelize.define('QRCode', {
+export const QRCodeModel = sequelize.define('QRCode', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -22,11 +22,6 @@ export const QRCode = sequelize.define('QRCode', {
       model: 'merchants',
       key: 'id'
     }
-  },
-  qr_code: {
-    type: DataTypes.STRING(100),
-    allowNull: false,
-    unique: true
   },
   qr_data: {
     type: DataTypes.TEXT,
@@ -84,7 +79,7 @@ export const QRCode = sequelize.define('QRCode', {
 });
 
 // Méthode pour vérifier si le QR code est valide
-QRCode.prototype.isValid = function() {
+QRCodeModel.prototype.isValid = function() {
   if (!this.is_active) return false;
   if (this.expires_at && new Date() > this.expires_at) return false;
   if (this.max_usage && this.usage_count >= this.max_usage) return false;

@@ -8,7 +8,6 @@ import { createAndSendNotification, emailTemplates, sendEmail } from '../utils/n
 import { encrypt, decrypt } from '../utils/encryption.js';
 import crypto from 'crypto';
 import { authenticateAdmin } from '../middleware/auth.js';
-import { isValidIBAN } from 'ibantools';
 import bcrypt from 'bcryptjs';
 import { Op } from 'sequelize';
 import { depositFromMvola, withdrawToMvola, payWithWallet } from '../controllers/mvola.controller.js';
@@ -340,95 +339,6 @@ function generateTransactionNumber() {
   const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
   return `TX-${timestamp}-${random}`;
 }
-
-// Retrait vers compte bancaire avec validation IBAN et BIC OK
-// router.post('/withdraw', authenticateUser, requireKYC, requireActiveWallet, validateTransaction,
-//   async (req, res) => {
-//     try {
-//       const { amount, bank_account, description = 'Retrait vers compte bancaire' } = req.body;
-
-//       // Vérification IBAN
-//       if (!bank_account || !bank_account.iban || !isValidIBAN(bank_account.iban)) {
-//         return res.status(400).json({ error: 'IBAN invalide' });
-//       }
-
-//       // Vérification BIC
-//       if (!bank_account.bic || !isValidBIC(bank_account.bic)) {
-//         return res.status(400).json({ error: 'BIC invalide' });
-//       }
-
-//       // Vérifier le solde disponible
-//       if (!req.wallet.canSpend(amount)) {
-//         return res.status(400).json({ error: 'Solde insuffisant ou limites dépassées' });
-//       }
-
-//       // Créer la transaction
-//       const transaction = await Transaction.create({
-//         transaction_number: generateTransactionNumber(),
-//         user_id: req.user.id,
-//         wallet_id: req.wallet.id,
-//         type: 'debit',
-//         category: 'withdrawal',
-//         amount,
-//         description,
-//         status: 'processing',
-//         payment_method: 'bank_transfer',
-//         metadata: {
-//           bank_account
-//         }
-//       });
-
-//       // Déduire le montant du portefeuille
-//       await req.wallet.deductBalance(amount, description);
-
-//       // Simuler traitement bancaire (95% de succès)
-//       setTimeout(async () => {
-//         try {
-//           const success = Math.random() > 0.05;
-
-//           if (success) {
-//             transaction.status = 'completed';
-//             transaction.processed_at = new Date();
-//             await transaction.save();
-
-//             await createAndSendNotification(req.user.id, {
-//               title: 'Retrait effectué',
-//               message: `Retrait de ${amount}€ effectué vers votre compte bancaire.`,
-//               type: 'transaction',
-//               channels: ['push', 'email']
-//             });
-//           } else {
-//             transaction.status = 'failed';
-//             transaction.failed_reason = 'Échec du virement bancaire';
-//             transaction.processed_at = new Date();
-//             await transaction.save();
-
-//             await req.wallet.addBalance(amount, 'Remboursement retrait échoué');
-
-//             await createAndSendNotification(req.user.id, {
-//               title: 'Retrait échoué',
-//               message: `Le retrait de ${amount}€ a échoué. Le montant a été remboursé.`,
-//               type: 'transaction',
-//               channels: ['push', 'email']
-//             });
-//           }
-//         } catch (error) {
-//           console.error('Erreur traitement retrait:', error);
-//         }
-//       }, 5000);
-
-//       // Réponse immédiate
-//       res.status(201).json({
-//         message: 'Demande de retrait en cours de traitement',
-//         transaction: transaction.toJSON(),
-//         new_balance: req.wallet.balance
-//       });
-//     } catch (error) {
-//       console.error('Erreur retrait:', error);
-//       res.status(500).json({ error: 'Erreur lors du retrait' });
-//     }
-//   }
-// );
 
 // Envoyer de l'argent du wallet vers une carte VISA
 router.post('/wallet-to-card', authenticateUser, requireKYC, async (req, res) => {
